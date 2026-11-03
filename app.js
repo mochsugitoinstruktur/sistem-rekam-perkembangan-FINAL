@@ -55,7 +55,7 @@ function initDefaultData() {
     ];
     dataPegawai = [
         { id: 'PEG001', nama: 'Budi Santoso, S.Tr.Sos', nip: '198503122010011005', jabatan: 'Pekerja Sosial', pokja: 'Pokja ABH', foto: '' },
-        { id: 'PEG003', nama: 'Drs. Ahmad Hidayat, M.Si', nip: '197501011999031001', jabatan: 'Kepala Pokja', pokja: 'Pokja ABH', foto: '' }
+        { id: 'PEG003', nama: 'Drs. Ahmad Hidayat, M.Si', nip: '197501011999031001', jabatan: 'Ketua Pokja', pokja: 'Pokja ABH', foto: '' }
     ];
     dataPerkembangan = [
         { id: 'PER001', pmId: 'PM001', tanggal: '2024-01-20', kategori: 'Perilaku & Disiplin', deskripsi: 'PM mulai menyesuaikan diri.', rekomendasi: 'Konseling rutin.', petugas: 'Budi Santoso, S.Tr.Sos' }
@@ -206,10 +206,10 @@ function renderFilteredTable(listPM) {
         tbody.appendChild(tr);
     });
 
-    const kepalaPokjaObj = dataPegawai.find(p => p.jabatan === 'Kepala Pokja');
-    if(kepalaPokjaObj) {
-        document.getElementById('report-ttd-pokja-nama').innerText = kepalaPokjaObj.nama;
-        document.getElementById('report-ttd-pokja-nip').innerText = kepalaPokjaObj.nip;
+    const KetuaPokjaObj = dataPegawai.find(p => p.jabatan === 'Ketua Pokja');
+    if(KetuaPokjaObj) {
+        document.getElementById('report-ttd-pokja-nama').innerText = KetuaPokjaObj.nama;
+        document.getElementById('report-ttd-pokja-nip').innerText = KetuaPokjaObj.nip;
     } else {
         document.getElementById('report-ttd-pokja-nama').innerText = 'Tuti Nurhayati';
         document.getElementById('report-ttd-pokja-nip').innerText = '198401182010122001';
@@ -349,7 +349,7 @@ function updateDropdownOptions() {
     const perkPMSelect = document.getElementById('perkembangan-pm');
     const perkPetugasSelect = document.getElementById('perkembangan-petugas');
 
-    const peksosList = dataPegawai.filter(p => p.jabatan === 'Pekerja Sosial' || p.jabatan === 'Kepala Pokja');
+    const peksosList = dataPegawai.filter(p => p.jabatan === 'Pekerja Sosial' || p.jabatan === 'Ketua Pokja');
     peksosSelect.innerHTML = peksosList.map(p => `<option value="${p.nama}">${p.nama}</option>`).join('');
     perkPetugasSelect.innerHTML = dataPegawai.map(p => `<option value="${p.nama}">${p.nama} (${p.jabatan})</option>`).join('');
 
@@ -608,7 +608,7 @@ function populateLaporanSelect() {
     selectPM.innerHTML = dataPM.map(pm => `<option value="${pm.id}">${pm.nama} (${pm.kasus})</option>`).join('');
 
     const selectPeksos = document.getElementById('select-laporan-peksos');
-    const peksosList = dataPegawai.filter(p => p.jabatan === 'Pekerja Sosial' || p.jabatan === 'Kepala Pokja');
+    const peksosList = dataPegawai.filter(p => p.jabatan === 'Pekerja Sosial' || p.jabatan === 'Ketua Pokja');
     selectPeksos.innerHTML = peksosList.map(p => `<option value="${p.nama}">${p.nama}</option>`).join('');
 }
 
@@ -645,13 +645,13 @@ function generateReport() {
     document.getElementById('report-ttd-peksos-nama').innerText = pm.peksos || 'Pekerja Sosial Pendamping';
     document.getElementById('report-ttd-peksos-nip').innerText = peksosObj ? peksosObj.nip : '-';
 
-    const kepalaPokjaObj = dataPegawai.find(p => p.jabatan === 'Kepala Pokja');
-    if(kepalaPokjaObj) {
-        document.getElementById('report-ttd-pokja-nama').innerText = kepalaPokjaObj.nama;
-        document.getElementById('report-ttd-pokja-nip').innerText = kepalaPokjaObj.nip;
+    const KetuaPokjaObj = dataPegawai.find(p => p.jabatan === 'Ketua Pokja');
+    if(KetuaPokjaObj) {
+        document.getElementById('report-ttd-pokja-nama').innerText = KetuaPokjaObj.nama;
+        document.getElementById('report-ttd-pokja-nip').innerText = KetuaPokjaObj.nip;
     } else {
-        document.getElementById('report-ttd-pokja-nama').innerText = 'Kepala Pokja Handayani';
-        document.getElementById('report-ttd-pokja-nip').innerText = '-';
+        document.getElementById('report-ttd-pokja-nama').innerText = 'Tuti Nurhayati';
+        document.getElementById('report-ttd-pokja-nip').innerText = '198401182010122001';
     }
 
     const pmPerkembangan = dataPerkembangan
