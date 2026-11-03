@@ -712,19 +712,25 @@ function exportAllToCSV() {
 
 function formatDate(dateString) {
     if (!dateString) return '-';
-    // Mengambil bagian tanggal saja (YYYY-MM-DD)
-    const datePart = dateString.split('T')[0];
-    const parts = datePart.split('-');
-    if (parts.length !== 3) return dateString;
+    
+    // Membuat objek Date dari string data (mendukung format ISO / UTC / YYYY-MM-DD HH:mm)
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString; // Fallback jika format tidak valid
 
-    const year = parts[0];
-    const month = parseInt(parts[1], 10);
-    const day = parts[2];
-
-    const months = [
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const monthNames = [
         '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ];
-    
-    return `${day} ${months[month]} ${year}`;
+    const month = monthNames[dateObj.getMonth() + 1];
+    const year = dateObj.getFullYear();
+
+    // Mengambil Jam dan Menit
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    // Jika ingin menampilkan tanggal beserta jam (contoh: 02 November 2026, 15:30)
+    return `${day} ${month} ${year}, ${hours}:${minutes} WITA / WIB`; 
+    // Atau jika hanya ingin format tanggal & jam tanpa teks zona waktu:
+    // return `${day} ${month} ${year} - ${hours}:${minutes}`;
 }
