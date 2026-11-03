@@ -730,7 +730,7 @@ function formatDate(dateString) {
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
 
     // Jika ingin menampilkan tanggal beserta jam (contoh: 02 November 2026, 15:30)
-    return `${day} ${month} ${year}, ${hours}:${minutes} WITA / WIB`; 
+    return `${day} ${month} ${year}, ${hours}:${minutes} WIB`; 
     // Atau jika hanya ingin format tanggal & jam tanpa teks zona waktu:
     // return `${day} ${month} ${year} - ${hours}:${minutes}`;
 }
