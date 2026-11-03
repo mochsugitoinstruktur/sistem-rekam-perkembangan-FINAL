@@ -5,9 +5,14 @@ let dataPM = [];
 let dataPegawai = [];
 let dataPerkembangan = [];
 
-// LOAD DATA DARI CLOUD SAAT PERTAMA KALI DIBUKA
+// LOAD DATA DARI CLOUD SAAT PERTAMA KALI DIBUKA & SET AUTO-REFRESH SETIAP 2 DETIK
 window.onload = function() {
-    loadDataFromCloud();
+    loadDataFromCloud(); // Muat data pertama kali saat halaman dibuka
+
+    // Sinkronisasi otomatis / ambil data dari cloud setiap 2 detik (2000 ms)
+    setInterval(() => {
+        loadDataFromCloud();
+    }, 2000);
 };
 
 async function loadDataFromCloud() {
