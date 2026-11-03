@@ -710,12 +710,30 @@ function exportAllToCSV() {
     showToast('Database berhasil diekspor ke format Excel CSV!');
 }
 
-function formatDate(dateString) {
+// 1. Format Tanggal + Jam (untuk Tgl Masuk / Catatan Perkembangan)
+function formatDateTime(dateString) {
     if (!dateString) return '-';
-    
-    // Membuat objek Date dari string data (mendukung format ISO / UTC / YYYY-MM-DD HH:mm)
     const dateObj = new Date(dateString);
-    if (isNaN(dateObj.getTime())) return dateString; // Fallback jika format tidak valid
+    if (isNaN(dateObj.getTime())) return dateString;
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const monthNames = [
+        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    const month = monthNames[dateObj.getMonth() + 1];
+    const year = dateObj.getFullYear();
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
+}
+
+// 2. Format Tanggal Saja Tanpa Jam (untuk Tgl Terminasi)
+function formatDateOnly(dateString) {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString;
 
     const day = String(dateObj.getDate()).padStart(2, '0');
     const monthNames = [
@@ -725,12 +743,5 @@ function formatDate(dateString) {
     const month = monthNames[dateObj.getMonth() + 1];
     const year = dateObj.getFullYear();
 
-    // Mengambil Jam dan Menit
-    const hours = String(dateObj.getHours()).padStart(2, '0');
-    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-    // Jika ingin menampilkan tanggal beserta jam (contoh: 02 November 2026, 15:30)
-    return `${day} ${month} ${year}, ${hours}:${minutes}`; 
-    // Atau jika hanya ingin format tanggal & jam tanpa teks zona waktu:
-    // return `${day} ${month} ${year} - ${hours}:${minutes}`;
+    return `${day} ${month} ${year}`;
 }
