@@ -279,8 +279,8 @@ function renderPMTable() {
             <td class="p-3"><span class="px-2 py-1 bg-rose-50 text-rose-700 rounded-md font-medium text-xs">${pm.kasus}</span></td>
             <td class="p-3"><span class="px-2 py-1 ${pm.status === 'Putusan' ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700'} rounded-md font-medium text-xs">${pm.status}</span></td>
             <td class="p-3 text-slate-600">${pm.peksos}</td>
-            <td class="p-3 text-slate-600">${formatDate(pm.masuk)}</td>
-            <td class="p-3 text-slate-600">${pm.terminasi ? formatDate(pm.terminasi) : '-'}</td>
+            <td class="p-3 text-slate-600">${formatDateOnly(pm.masuk)}</td>
+            <td class="p-3 text-slate-600">${pm.terminasi ? formatDateOnly(pm.terminasi) : '-'}</td>
             <td class="p-3 text-center">
                 <div class="flex items-center justify-center space-x-2">
                     <button onclick="editPM('${pm.id}')" class="p-1.5 bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -331,7 +331,7 @@ function renderPerkembanganTable() {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
         tr.innerHTML = `
-            <td class="p-3 font-mono text-xs text-slate-600">${formatDate(p.tanggal)}</td>
+            <td class="p-3 font-mono text-xs text-slate-600">${formatDateWithTime(p.tanggal)}</td>
             <td class="p-3 font-semibold text-slate-800">${pm.nama}</td>
             <td class="p-3"><span class="px-2 py-1 bg-purple-50 text-purple-700 rounded-md text-xs font-medium">${p.kategori}</span></td>
             <td class="p-3 text-slate-700 max-w-xs">${p.deskripsi}</td>
@@ -710,26 +710,12 @@ function exportAllToCSV() {
     showToast('Database berhasil diekspor ke format Excel CSV!');
 }
 
-// 1. Format Tanggal + Jam (untuk Tgl Masuk / Catatan Perkembangan)
-function formatDateTime(dateString) {
-    if (!dateString) return '-';
-    const dateObj = new Date(dateString);
-    if (isNaN(dateObj.getTime())) return dateString;
-
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const monthNames = [
-        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
-    const month = monthNames[dateObj.getMonth() + 1];
-    const year = dateObj.getFullYear();
-    const hours = String(dateObj.getHours()).padStart(2, '0');
-    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-    return `${day} ${month} ${year}, ${hours}:${minutes}`;
+// 1. Fungsi Alias / Cadangan untuk Mencegah Error
+function formatDate(dateString) {
+    return formatDateOnly(dateString);
 }
 
-// 2. Format Tanggal Saja Tanpa Jam (untuk Tgl Terminasi)
+// 2. Format khusus Tanggal Saja (Untuk Tgl Masuk & Terminasi PM)
 function formatDateOnly(dateString) {
     if (!dateString) return '-';
     const dateObj = new Date(dateString);
@@ -744,4 +730,24 @@ function formatDateOnly(dateString) {
     const year = dateObj.getFullYear();
 
     return `${day} ${month} ${year}`;
+}
+
+// 3. Format Tanggal & Jam (Untuk Jurnal / Rekam Perkembangan)
+function formatDateWithTime(dateString) {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString;
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const monthNames = [
+        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    const month = monthNames[dateObj.getMonth() + 1];
+    const year = dateObj.getFullYear();
+
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
