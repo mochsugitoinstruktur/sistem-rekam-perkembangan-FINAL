@@ -151,7 +151,7 @@ function generateFilterReport() {
     if (type === 'peksos') {
         const selectedPeksos = document.getElementById('select-laporan-peksos').value;
         filteredPM = dataPM.filter(pm => pm.peksos === selectedPeksos);
-        titleEl.innerText = "LAPORAN REKAPITULASI PM BERDASARKAN PEKSOS PENDAMPING";
+        titleEl.innerText = "LAPORAN REKAPITULASI PM BERDASARKAN PEKERJA SOSIAL";
         subtitleEl.innerText = `Pekerja Sosial: ${selectedPeksos}`;
 
         const peksosObj = dataPegawai.find(p => p.nama === selectedPeksos);
