@@ -1,0 +1,29 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+@media print {
+    header, .no-print, nav, button, #toast, .tab-btn {
+        display: none !important;
+    }
+    body, main {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    #tab-laporan {
+        display: block !important;
+    }
+    #report-paper {
+        box-shadow: none !important;
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .bg-slate-300 {
+        background: white !important;
+        padding: 0 !important;
+    }
+}
