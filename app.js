@@ -191,7 +191,7 @@ function renderFilteredTable(listPM) {
             .sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
 
         // Bungkus dengan formatDate di sini
-        const lastUpdate = pmPerkembangan.length > 0 ? formatDate(pmPerkembangan[0].tanggal) : '-';
+        const lastUpdate = pmPerkembangan.length > 0 ? formatDateWithTime(pmPerkembangan[0].tanggal) : '-';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -326,7 +326,7 @@ function renderPerkembanganTable() {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
         tr.innerHTML = `
-            <td class="p-3 font-mono text-xs text-slate-600">${formatDate(p.tanggal)}</td>
+            <td class="p-3 font-mono text-xs text-slate-600">${formatDateWithTime(p.tanggal)}</td>
             <td class="p-3 font-semibold text-slate-800">${pm.nama}</td>
             <td class="p-3"><span class="px-2 py-1 bg-purple-50 text-purple-700 rounded-md text-xs font-medium">${p.kategori}</span></td>
             <td class="p-3 text-slate-700 max-w-xs">${p.deskripsi}</td>
@@ -542,7 +542,18 @@ function openPerkembanganModal(editId = null) {
         if(perk) {
             document.getElementById('perkembangan-id').value = perk.id;
             document.getElementById('perkembangan-pm').value = perk.pmId;
-            document.getElementById('perkembangan-tanggal').value = perk.tanggal;
+            
+            // Format ISO local untuk datetime-local
+            if (perk.tanggal) {
+                const d = new Date(perk.tanggal);
+                if (!isNaN(d.getTime())) {
+                    const isoLocal = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    document.getElementById('perkembangan-tanggal').value = isoLocal;
+                } else {
+                    document.getElementById('perkembangan-tanggal').value = perk.tanggal;
+                }
+            }
+            
             document.getElementById('perkembangan-kategori').value = perk.kategori;
             document.getElementById('perkembangan-deskripsi').value = perk.deskripsi;
             document.getElementById('perkembangan-rekomendasi').value = perk.rekomendasi;
@@ -550,11 +561,13 @@ function openPerkembanganModal(editId = null) {
             document.getElementById('modal-perkembangan-title').innerText = 'Edit Rekam Perkembangan';
         }
     } else {
-        document.getElementById('perkembangan-tanggal').value = new Date().toISOString().split('T')[0];
+        // Otomatis terisi Tanggal & Jam Realtime saat ini
+        const now = new Date();
+        const isoLocalNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        document.getElementById('perkembangan-tanggal').value = isoLocalNow;
     }
     document.getElementById('modal-perkembangan').classList.remove('hidden');
 }
-
 function closePerkembanganModal() { document.getElementById('modal-perkembangan').classList.add('hidden'); }
 
 function savePerkembangan(e) {
@@ -627,8 +640,8 @@ function generateReport() {
     document.getElementById('report-pm-kasus').innerText = pm.kasus;
     document.getElementById('report-pm-status').innerText = pm.status;
     document.getElementById('report-pm-peksos').innerText = pm.peksos;
-    document.getElementById('report-pm-masuk').innerText = formatDate(pm.masuk);
-    document.getElementById('report-pm-terminasi').innerText = pm.terminasi ? formatDate(pm.terminasi) : 'Belum Ditentukan';
+    document.getElementById('report-pm-masuk').innerText = formatDateOnly(pm.masuk);
+    document.getElementById('report-pm-terminasi').innerText = pm.terminasi ? formatDateOnly(pm.terminasi) : 'Belum Ditentukan';
 
     const imgEl = document.getElementById('report-pm-photo');
     const iconEl = document.getElementById('report-pm-photo-icon');
@@ -667,7 +680,7 @@ function generateReport() {
         pmPerkembangan.forEach(p => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td class="border border-slate-300 p-2 font-mono align-top">${formatDate(p.tanggal)}</td>
+        <td class="border border-slate-300 p-2 font-mono align-top">${formatDateWithTime(p.tanggal)}</td>
         <td class="border border-slate-300 p-2 font-semibold align-top">${p.kategori}</td>
         <td class="border border-slate-300 p-2 align-top">
             <p>${p.deskripsi}</p>
@@ -705,21 +718,44 @@ function exportAllToCSV() {
     showToast('Database berhasil diekspor ke format Excel CSV!');
 }
 
+// Function pendukung untuk mencegah error jika dipanggil 'formatDate'
 function formatDate(dateString) {
+    return formatDateOnly(dateString);
+}
+
+// 1. Format Tanggal Saja (Untuk Data PM: Tanggal Masuk & Terminasi)
+function formatDateOnly(dateString) {
     if (!dateString) return '-';
-    // Mengambil bagian tanggal saja (YYYY-MM-DD)
-    const datePart = dateString.split('T')[0];
-    const parts = datePart.split('-');
-    if (parts.length !== 3) return dateString;
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString;
 
-    const year = parts[0];
-    const month = parseInt(parts[1], 10);
-    const day = parts[2];
-
-    const months = [
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const monthNames = [
         '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ];
-    
-    return `${day} ${months[month]} ${year}`;
+    const month = monthNames[dateObj.getMonth() + 1];
+    const year = dateObj.getFullYear();
+
+    return `${day} ${month} ${year}`;
+}
+
+// 2. Format Tanggal beserta Jam & Menit Realtime (Untuk Rekam Perkembangan)
+function formatDateWithTime(dateString) {
+    if (!dateString) return '-';
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString;
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const monthNames = [
+        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    const month = monthNames[dateObj.getMonth() + 1];
+    const year = dateObj.getFullYear();
+
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
