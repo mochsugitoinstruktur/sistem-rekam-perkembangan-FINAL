@@ -1,29 +1,91 @@
-body {
-    font-family: 'Inter', sans-serif;
+/* style.css */
+
+/* Pengaturan default untuk Desktop / Laptop (Fit on Screen) */
+@media (min-width: 1024px) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
 }
 
+/* Penyesuaian untuk Layar Mobile / Tablet (Mobile Friendly Scroll) */
+@media (max-width: 1023px) {
+    body {
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+    main {
+        overflow: visible !important;
+    }
+    .tab-content {
+        height: auto !important;
+    }
+}
+
+/* Menjaga styling cetak PDF tetap bersih */
+/* ATURAN KHUSUS MODUS CETAK / EKSPOR PDF */
 @media print {
-    header, .no-print, nav, button, #toast, .tab-btn {
+    /* 1. Sembunyikan elemen luar aplikasi web (Header, Navbar, Tombol, Filter, dll) */
+    header, 
+    nav, 
+    button, 
+    select, 
+    label, 
+    .no-print, 
+    #toast, 
+    .tab-btn,
+    #tab-pm, 
+    #tab-pegawai, 
+    #tab-perkembangan,
+    .flex-none {
         display: none !important;
     }
-    body, main {
+
+    /* 2. Reset latar belakang body & main menjadi putih bersih */
+    html, body, main {
         background: white !important;
         color: black !important;
         padding: 0 !important;
         margin: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
     }
+
+    /* 3. Tampilkan hanya kontainer tab laporan (A4) */
     #tab-laporan {
         display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
     }
+
+    /* 4. Sembunyikan latar belakang abu-abu kontainer scroll */
+    .bg-slate-300 {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* 5. Atur Kertas A4 agar pas dan tercetak utuh */
     #report-paper {
         box-shadow: none !important;
+        border: none !important;
         width: 100% !important;
+        max-width: 100% !important;
         min-height: auto !important;
         padding: 0 !important;
         margin: 0 !important;
+        position: relative !important;
     }
-    .bg-slate-300 {
-        background: white !important;
-        padding: 0 !important;
-    }
+
+    /* 
+      CATATAN: 
+      Karena baris perintah pembatas gambar (#report-perkembangan-body img) 
+      sudah dihapus/ditiadakan di sini, maka foto dokumentasi di dalam 
+      tabel rekam perkembangan akan otomatis Ikut Tampil saat dicetak atau diekspor ke PDF.
+    */
 }
