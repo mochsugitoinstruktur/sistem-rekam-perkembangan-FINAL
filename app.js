@@ -590,6 +590,7 @@ function savePerkembangan(e) {
             deskripsi: document.getElementById('perkembangan-deskripsi').value,
             rekomendasi: document.getElementById('perkembangan-rekomendasi').value,
             petugas: document.getElementById('perkembangan-petugas').value,
+            // Menyimpan foto baru atau mempertahankan foto lama jika tidak diubah saat edit
             foto: fotoBase64 || (existingIndex >= 0 ? dataPerkembangan[existingIndex].foto : '')
         };
 
@@ -690,6 +691,8 @@ function generateReport() {
         <td class="border border-slate-300 p-2 align-top">
             <p>${p.deskripsi}</p>
             ${p.rekomendasi ? `<p class="mt-1 text-slate-600 italic"><strong>Rekomendasi:</strong> ${p.rekomendasi}</p>` : ''}
+            
+            <!-- Pastikan baris ini ada agar foto dirender -->
             ${p.foto ? `<div class="mt-2"><img src="${p.foto}" alt="Foto Perkembangan" class="w-28 h-20 object-cover rounded border shadow-sm"></div>` : ''}
         </td>
         <td class="border border-slate-300 p-2 align-top">${p.petugas}</td>
